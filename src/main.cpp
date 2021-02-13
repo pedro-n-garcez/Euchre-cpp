@@ -50,7 +50,7 @@ class Card{
 					return "Queen";
 					break;
 				case J:
-					return "Joker";
+					return "Jack";
 					break;
 				case T:
 					return "Ten";
