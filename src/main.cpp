@@ -1,4 +1,3 @@
-#include <vector>
 #include <stack>
 #include <iostream>
 #include <algorithm>
@@ -32,9 +31,6 @@ class Card{
 				case Clubs:
 					return "Clubs";
 					break;
-				default:
-					return "No suit found";
-					break;
 			}
 		}
 		std::string ReturnRankString()
@@ -50,16 +46,13 @@ class Card{
 					return "Queen";
 					break;
 				case J:
-					return "Joker";
+					return "Jack";
 					break;
 				case T:
 					return "Ten";
 					break;
 				case N:
 					return "Nine";
-					break;
-				default:
-					return "No rank found";
 					break;
 			}
 		}
@@ -71,8 +64,9 @@ class Player{
 		std::string name;
 	public:
 		Player(){}
-		void addCard(Card * c){
-			myCards.push(c);
+		void addCard(std::stack<Card*> * s){
+			myCards.push(s->top());
+			s->pop();
 		}
 
 };
@@ -124,14 +118,27 @@ class Game{
 			isPlaying = true;
 			while (isPlaying)
 			{
-				p1.addCard(Deck.top());
-				Deck.pop();
-				p2.addCard(Deck.top());
-				Deck.pop();
-				p3.addCard(Deck.top());
-				Deck.pop();
-				p4.addCard(Deck.top());
-				Deck.pop();
+				p1.addCard(&Deck);
+				p1.addCard(&Deck);
+				p2.addCard(&Deck);								
+				p2.addCard(&Deck);
+				p3.addCard(&Deck);
+				p3.addCard(&Deck);
+				p4.addCard(&Deck);
+				p4.addCard(&Deck);
+
+				p1.addCard(&Deck);
+				p1.addCard(&Deck);
+				p1.addCard(&Deck);
+				p2.addCard(&Deck);								
+				p2.addCard(&Deck);
+				p2.addCard(&Deck);
+				p3.addCard(&Deck);
+				p3.addCard(&Deck);
+				p3.addCard(&Deck);
+				p4.addCard(&Deck);
+				p4.addCard(&Deck);
+				p4.addCard(&Deck);
 
 				Card * topCard = Deck.top();
 				std::cout << "The top card on the deck is " << topCard->ReturnRankString() << " of " << topCard->ReturnSuitString() << "." << std::endl;
@@ -147,5 +154,4 @@ int main()
 	Game g;
 	g.CreateDeck();
 	g.Start();
-	return 0;
 }
