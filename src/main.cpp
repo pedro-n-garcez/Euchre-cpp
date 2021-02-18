@@ -31,6 +31,9 @@ class Card{
 				case Clubs:
 					return "Clubs";
 					break;
+				default:
+					return "Suit not found";
+					break;
 			}
 		}
 		std::string ReturnRankString()
@@ -53,6 +56,9 @@ class Card{
 					break;
 				case N:
 					return "Nine";
+					break;
+				default:
+					return "Rank not found";
 					break;
 			}
 		}
