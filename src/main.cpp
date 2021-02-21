@@ -5,6 +5,7 @@
 #include <chrono>
 #include <random>
 
+//color of a suit is represented as parity of enum values
 enum Suit { Diamonds=1, Clubs=2, Hearts=3, Spades=4 };
 enum Rank {A=14,K=13,Q=12,J=11,T=10,N=9};
 
