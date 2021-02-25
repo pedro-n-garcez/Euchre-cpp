@@ -99,13 +99,14 @@ class Player{
 		
 		//distribute points for a card given trump suit
 		int evaluateCard(Card * c, Suit trump){
-				if (c->suit == trump && c->rank == J){
-					c->value += 20;
-				} else if (c->rank == J && c->suit % 2 == trump % 2 ){
-					c->value += 19;
-				} else if (c->suit == trump && c->rank != J){
-					c->value += 10;
-				} return c->value;
+			int card_value = c->value;
+			if (c->suit == trump && c->rank == J){
+				card_value += 20;
+			} else if (c->rank == J && c->suit % 2 == trump % 2 ){
+				card_value += 19;
+			} else if (c->suit == trump && c->rank != J){
+				card_value += 10;
+			} return card_value;
 		}
 		
 		//adds points of all player's cards and returns a weight for hand
