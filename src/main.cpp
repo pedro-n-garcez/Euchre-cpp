@@ -5,11 +5,10 @@
 #include <chrono>
 #include <random>
 
-//color of a suit is represented as parity of enum values
+const float minWeight = 0.65f;
+
 enum Suit { Diamonds=1, Clubs=2, Hearts=3, Spades=4 };
 enum Rank {A=14,K=13,Q=12,J=11,T=10,N=9};
-
-class Player;
 
 class Card{
 	public:
@@ -111,15 +110,16 @@ class Player{
 		
 		//adds points of all player's cards and returns a weight for hand
 		float handWeight(Suit trump){
-			int total = 0;
+			float total = 0.0f;
 			for (size_t i = 0; i < myCards.size(); i++){
 				total += evaluateCard(myCards[i],trump);
-			} return (float)total / 130;
+			} return total / 130.0f;
 		}
 		bool wantTrump(float weight){
-			if (weight >= 0.55){
+			if (weight >= minWeight){
 				return true;
-			} else { return false; }
+			}
+			return false;
 		}
 		
 };
@@ -135,12 +135,14 @@ class Game{
 		Player * p4=new Player(4);
 		Card * trump;
 		std::vector<Card*> Deck;
+
 		Game(){
 			players.push_back(p1);
 			players.push_back(p2);
 			players.push_back(p3);
 			players.push_back(p4);
 		}
+
 		void CreateDeck()
 		{
 			//add the 24 cards to vector
@@ -172,6 +174,7 @@ class Game{
 			unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 			std::shuffle(Deck.begin(), Deck.end(), std::default_random_engine(seed));
 		}
+
 		void Start()
 		{
 			isPlaying = true;
@@ -195,31 +198,57 @@ class Game{
 				Player * choseTrump;
 				bool trumpChosen = false;
 				
+				//TEST AREA - FOR DEBUGGING ONLY!!
+				for (size_t a=0; a < players.size();a++){
+					players[a]->PrintHand();
+					std::cout << players[a]->handWeight(Deck.front()->suit) << std::endl;
+					std::cout << "Trump candidate is: " + Deck.front()->ReturnSuitString() << std::endl << "\n";
+				}
+				
 				//if player's hand is strong enough given the trump candidate, they will order it up
 				for (size_t k = 0; k < players.size(); k++){
 					if (players[k]->wantTrump(players[k]->handWeight(Deck.front()->suit)) == true){
 						choseTrump = players[k];
 						std::cout << players[k]->ReturnPlayerNumber() << " says yes!" << std::endl;
 						trumpChosen = true;
+						trump = Deck.front();
 						break;
 					} else{
 						std::cout << players[k]->ReturnPlayerNumber() << " says no." << std::endl;						
 					}
 				}
 				
+				if(trumpChosen == false)
+				{
+					std::cout << "\n" << "Nobody wanted " << Deck.front()->ReturnSuitString() << " as Trump, so next player gets to choose." << std::endl;
+ 					for (size_t m = 0; m < players.size(); m++){
+						for (int s = 1; s < 5; s++){
+							if (players[m]->wantTrump(players[m]->handWeight(static_cast<Suit>(s))) == true){
+								choseTrump = players[m];
+								trump = new Card(static_cast<Suit>(s),A);
+								trumpChosen = true;
+								break;
+							}
+						}
+						if (trumpChosen == true){
+							break;
+						}
+						std::cout << players[m]->ReturnPlayerNumber() << " pass. " << std::endl;
+					}
+				}
+				
 				//if no trump was chosen, cards are redealt
 				if(trumpChosen == false){
-					std::cout << "Bust! Redealing..." << std::endl;
+					std::cout << "\n" << "Bust! Redealing..." << std::endl;
 					Deck.clear();
-					for (size_t m=0;m<players.size();m++){
-						players[m]->ClearHand();
+					for (size_t n=0;n<players.size();n++){
+						players[n]->ClearHand();
 					}
 					CreateDeck();
 					Start();
 				}
 				
-				trump = Deck.front();
-				std::cout << choseTrump->ReturnPlayerNumber() << " chose " << trump->ReturnSuitString() << " to be trump." << std::endl;
+				std::cout << "\n" << choseTrump->ReturnPlayerNumber() << " chose " << trump->ReturnSuitString() << " to be trump." << std::endl;
 				
 				isPlaying = false;
 			}
