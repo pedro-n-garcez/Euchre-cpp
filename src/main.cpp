@@ -198,13 +198,6 @@ class Game{
 				Player * choseTrump;
 				bool trumpChosen = false;
 				
-				//TEST AREA - FOR DEBUGGING ONLY!!
-				for (size_t a=0; a < players.size();a++){
-					players[a]->PrintHand();
-					std::cout << players[a]->handWeight(Deck.front()->suit) << std::endl;
-					std::cout << "Trump candidate is: " + Deck.front()->ReturnSuitString() << std::endl << "\n";
-				}
-				
 				//if player's hand is strong enough given the trump candidate, they will order it up
 				for (size_t k = 0; k < players.size(); k++){
 					if (players[k]->wantTrump(players[k]->handWeight(Deck.front()->suit)) == true){
