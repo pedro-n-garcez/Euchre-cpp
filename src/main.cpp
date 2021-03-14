@@ -4,6 +4,7 @@
 #include <string>
 #include <chrono>
 #include <random>
+#include <tuple>
 
 const float minWeight = 0.65f;
 
@@ -79,7 +80,7 @@ class Player{
 			v->erase(v->begin());
 		}
 		std::string ReturnPlayerNumber(){
-			return "Player " + std::to_string(playerNumber);
+			return "Player " + std::to_string(playerNumber+1);
 		}
 		void PrintHand(){
 			std::cout << ReturnPlayerNumber() << " has the following hand: " << std::endl;
@@ -89,11 +90,6 @@ class Player{
 		}
 		void ClearHand(){
 			 myCards.clear();
-		}
-		Card * playCard(int pos){
-			Card * c = myCards[pos];
-			myCards.erase(myCards.begin()+pos);
-			return c;
 		}
 		
 		//distribute points for a card given trump suit
@@ -115,13 +111,59 @@ class Player{
 				total += evaluateCard(myCards[i],trump);
 			} return total / 130.0f;
 		}
+		
 		bool wantTrump(float weight){
-			if (weight >= minWeight){
-				return true;
-			}
-			return false;
+			return (weight >= minWeight) ? true : false;
 		}
 		
+		//returns strongest card for player
+		int bestCardIndex(Suit trump, bool first, Suit lead){
+			int max = evaluateCard(myCards[0],trump);
+			int index = 0;
+			bool hasLead = false;
+			
+			if (first){
+				for (int i = 0; i < myCards.size(); i++){
+    	       		if (evaluateCard(myCards[i],trump)>max){
+          	 	 		max = evaluateCard(myCards[i],trump);
+          	 	 		index = i;
+        			}
+        		}
+			}
+			else {
+				//TODO: why does the first while here break if condition is (i<myCards.size() || hasLead==false)
+				int i=0;
+				while (i < myCards.size()){
+					if (myCards[i]->suit == lead){hasLead=true;}
+					i++;
+				}
+				if (hasLead){
+					int j = 0;
+					while (j < myCards.size()){
+						if (evaluateCard(myCards[j],trump)>max && myCards[j]->suit==lead){
+          	 	 			max = evaluateCard(myCards[j],trump);
+          	 	 			index = j;
+        				}
+						j++;
+					}
+				} else {
+					for (int k = 0; k < myCards.size(); k++){
+    	       			if (evaluateCard(myCards[k],trump)>max){
+          	 	 			max = evaluateCard(myCards[k],trump);
+          	 	 			index = k;
+        				}
+        			}
+				}
+			}
+			return index;
+		}
+		
+		Card * playCard(int index, Suit trump){
+			Card * c = myCards[index];
+			c->value = evaluateCard(c,trump);
+			myCards.erase(myCards.begin()+index);
+			return c;
+		}
 };
 
 class Game{
@@ -129,12 +171,13 @@ class Game{
 		bool isPlaying;
 	public:
 		std::vector<Player*> players;
-		Player * p1=new Player(1);
-		Player * p2=new Player(2);
-		Player * p3=new Player(3);
-		Player * p4=new Player(4);
+		Player * p1=new Player(0);
+		Player * p2=new Player(1);
+		Player * p3=new Player(2);
+		Player * p4=new Player(3);
 		Card * trump;
 		std::vector<Card*> Deck;
+		std::vector<std::tuple<Card*, int>> Trick;
 
 		Game(){
 			players.push_back(p1);
@@ -198,6 +241,13 @@ class Game{
 				Player * choseTrump;
 				bool trumpChosen = false;
 				
+				//TEST AREA - FOR DEBUGGING ONLY!!
+				for (size_t a=0; a < players.size();a++){
+					players[a]->PrintHand();
+					std::cout << players[a]->handWeight(Deck.front()->suit) << std::endl;
+					std::cout << "Trump candidate is: " + Deck.front()->ReturnSuitString() << std::endl << "\n";
+				}
+				
 				//if player's hand is strong enough given the trump candidate, they will order it up
 				for (size_t k = 0; k < players.size(); k++){
 					if (players[k]->wantTrump(players[k]->handWeight(Deck.front()->suit)) == true){
@@ -226,7 +276,7 @@ class Game{
 						if (trumpChosen == true){
 							break;
 						}
-						std::cout << players[m]->ReturnPlayerNumber() << " pass. " << std::endl;
+						std::cout << "\n" << players[m]->ReturnPlayerNumber() << " passes. " << std::endl;
 					}
 				}
 				
@@ -241,7 +291,45 @@ class Game{
 					Start();
 				}
 				
-				std::cout << "\n" << choseTrump->ReturnPlayerNumber() << " chose " << trump->ReturnSuitString() << " to be trump." << std::endl;
+				std::cout << "\n" << choseTrump->ReturnPlayerNumber() << " chose " << trump->ReturnSuitString() << " to be trump.\n" << std::endl;
+				
+				//Gameplay begins
+				int tricksLeft=5;
+				int next = 0;
+				Suit lead;
+				
+				while (tricksLeft != 0)
+				{				
+					int playersLeftInTrick = 4;
+					bool first = true;
+					while (playersLeftInTrick != 0)
+					{
+						//push back a tuple with the player's card and the number of the player
+						Trick.push_back(std::make_tuple(players[next]->playCard(players[next]->bestCardIndex(trump->suit,first,lead),trump->suit), next));
+						std::cout << players[next]->ReturnPlayerNumber() << " played the " << std::get<0>(Trick.back())->ReturnRankString() << " of " << std::get<0>(Trick.back())->ReturnSuitString() << "." << std::endl;
+						if (first){lead = std::get<0>(Trick.back())->suit;}
+						first = false;
+						next = (next+1) % 4;
+						playersLeftInTrick--;
+					}
+					
+					int max = 0;
+					//determine player with highest card
+					for (int i = 0; i < Trick.size(); i++){
+    	       			if (std::get<0>(Trick[i])->value>max){
+          	 	 			max = std::get<0>(Trick[i])->value;
+          	 	 			next = std::get<1>(Trick[i]);
+        				}
+        			}
+        			
+        			std::cout << "\n" << "Player " << next+1 << " wins this trick.\n" << std::endl;
+        			
+        			//clear trick to start over
+        			Trick.clear();
+					tricksLeft--;
+				}
+				
+				std::cout << "\n" << "No more tricks left! Final score to be determined." << std::endl;
 				
 				isPlaying = false;
 			}
