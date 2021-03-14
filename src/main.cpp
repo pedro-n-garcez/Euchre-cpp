@@ -131,7 +131,6 @@ class Player{
         			}
 			}
 			else {
-				//TODO: why does the first while here break if condition is (i<myCards.size() || hasLead==false)
 				int i=0;
 				while (i < myCards.size()){
 					if (myCards[i]->suit == lead){hasLead=true;}
