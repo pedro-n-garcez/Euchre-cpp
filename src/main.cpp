@@ -123,7 +123,7 @@ class Player{
 			bool hasLead = false;
 			
 			if (first){
-				for (int i = 0; i < myCards.size(); i++){
+				for (size_t i = 0; i < myCards.size(); i++){
     	       				if (evaluateCard(myCards[i],trump)>max){
           	 	 			max = evaluateCard(myCards[i],trump);
           	 	 			index = i;
@@ -131,13 +131,13 @@ class Player{
         			}
 			}
 			else {
-				int i=0;
+				size_t i=0;
 				while (i < myCards.size()){
 					if (myCards[i]->suit == lead){hasLead=true;}
 					i++;
 				}
 				if (hasLead){
-					int j = 0;
+					size_t j = 0;
 					while (j < myCards.size()){
 						if (evaluateCard(myCards[j],trump)>max && myCards[j]->suit==lead){
           	 	 				max = evaluateCard(myCards[j],trump);
@@ -146,7 +146,7 @@ class Player{
 						j++;
 					}
 				} else {
-					for (int k = 0; k < myCards.size(); k++){
+					for (size_t k = 0; k < myCards.size(); k++){
     	       					if (evaluateCard(myCards[k],trump)>max){
           	 	 				max = evaluateCard(myCards[k],trump);
           	 	 				index = k;
@@ -307,7 +307,7 @@ class Game{
 					
 					int max = 0;
 					//determine player with highest card
-					for (int i = 0; i < Trick.size(); i++){
+					for (size_t i = 0; i < Trick.size(); i++){
     	       					if (std::get<0>(Trick[i])->value>max){
           	 	 				max = std::get<0>(Trick[i])->value;
           	 	 				next = std::get<1>(Trick[i]);
