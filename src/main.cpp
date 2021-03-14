@@ -124,11 +124,11 @@ class Player{
 			
 			if (first){
 				for (int i = 0; i < myCards.size(); i++){
-    	       		if (evaluateCard(myCards[i],trump)>max){
-          	 	 		max = evaluateCard(myCards[i],trump);
-          	 	 		index = i;
+    	       				if (evaluateCard(myCards[i],trump)>max){
+          	 	 			max = evaluateCard(myCards[i],trump);
+          	 	 			index = i;
+        				}
         			}
-        		}
 			}
 			else {
 				//TODO: why does the first while here break if condition is (i<myCards.size() || hasLead==false)
@@ -141,18 +141,18 @@ class Player{
 					int j = 0;
 					while (j < myCards.size()){
 						if (evaluateCard(myCards[j],trump)>max && myCards[j]->suit==lead){
-          	 	 			max = evaluateCard(myCards[j],trump);
-          	 	 			index = j;
-        				}
+          	 	 				max = evaluateCard(myCards[j],trump);
+          	 	 				index = j;
+        					}
 						j++;
 					}
 				} else {
 					for (int k = 0; k < myCards.size(); k++){
-    	       			if (evaluateCard(myCards[k],trump)>max){
-          	 	 			max = evaluateCard(myCards[k],trump);
-          	 	 			index = k;
+    	       					if (evaluateCard(myCards[k],trump)>max){
+          	 	 				max = evaluateCard(myCards[k],trump);
+          	 	 				index = k;
+        					}
         				}
-        			}
 				}
 			}
 			return index;
@@ -241,13 +241,6 @@ class Game{
 				Player * choseTrump;
 				bool trumpChosen = false;
 				
-				//TEST AREA - FOR DEBUGGING ONLY!!
-				for (size_t a=0; a < players.size();a++){
-					players[a]->PrintHand();
-					std::cout << players[a]->handWeight(Deck.front()->suit) << std::endl;
-					std::cout << "Trump candidate is: " + Deck.front()->ReturnSuitString() << std::endl << "\n";
-				}
-				
 				//if player's hand is strong enough given the trump candidate, they will order it up
 				for (size_t k = 0; k < players.size(); k++){
 					if (players[k]->wantTrump(players[k]->handWeight(Deck.front()->suit)) == true){
@@ -316,16 +309,16 @@ class Game{
 					int max = 0;
 					//determine player with highest card
 					for (int i = 0; i < Trick.size(); i++){
-    	       			if (std::get<0>(Trick[i])->value>max){
-          	 	 			max = std::get<0>(Trick[i])->value;
-          	 	 			next = std::get<1>(Trick[i]);
+    	       					if (std::get<0>(Trick[i])->value>max){
+          	 	 				max = std::get<0>(Trick[i])->value;
+          	 	 				next = std::get<1>(Trick[i]);
+        					}
         				}
-        			}
         			
-        			std::cout << "\n" << "Player " << next+1 << " wins this trick.\n" << std::endl;
+        				std::cout << "\n" << "Player " << next+1 << " wins this trick.\n" << std::endl;
         			
-        			//clear trick to start over
-        			Trick.clear();
+        				//clear trick to start over
+        				Trick.clear();
 					tricksLeft--;
 				}
 				
