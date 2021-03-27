@@ -12,5 +12,4 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
-
-add_executable(euchre ${MAIN_FILE} src/main.cpp)
+add_executable(euchre src/Card.cpp src/Player.cpp src/Game.cpp src/main.cpp)
