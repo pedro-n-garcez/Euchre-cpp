@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 project(euchre)
 
+include_directories(.)
+include(gtest.cmake)
+
 find_package(Threads)
 set (CMAKE_CXX_STANDARD 11)
 
@@ -13,3 +16,5 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 add_executable(euchre src/Card.cpp src/Player.cpp src/Game.cpp src/main.cpp)
+add_executable(test test/test.cpp)
+target_link_libraries(test gtest ${CMAKE_THREAD_LIBS_INIT})
