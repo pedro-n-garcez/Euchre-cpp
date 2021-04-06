@@ -6,6 +6,7 @@ include(gtest.cmake)
 
 find_package(Threads)
 set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -Werror -pthread")
@@ -16,5 +17,5 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 add_executable(euchre src/Card.cpp src/Player.cpp src/Game.cpp src/main.cpp)
-add_executable(test test/test.cpp)
-target_link_libraries(test gtest ${CMAKE_THREAD_LIBS_INIT})
+add_executable(euchre-test test/test.cpp src/Card.cpp src/Player.cpp src/Game.cpp)
+target_link_libraries(euchre-test googletest ${CMAKE_THREAD_LIBS_INIT})
