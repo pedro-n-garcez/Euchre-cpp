@@ -18,4 +18,4 @@ endif()
 
 add_executable(euchre src/Card.cpp src/Player.cpp src/Game.cpp src/main.cpp)
 add_executable(euchre-test test/test.cpp src/Card.cpp src/Player.cpp src/Game.cpp)
-target_link_libraries(euchre-test googletest ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(euchre-test gtest ${CMAKE_THREAD_LIBS_INIT})
